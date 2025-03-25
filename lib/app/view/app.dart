@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:form_builder_assignment/counter/counter.dart';
+import 'package:form_builder_assignment/form_builder/view/form_builder_provider.dart';
 import 'package:form_builder_assignment/l10n/l10n.dart';
 
 class App extends StatelessWidget {
@@ -16,7 +16,7 @@ class App extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
+      home: const FormBuilderProvider(),
     );
   }
 }
