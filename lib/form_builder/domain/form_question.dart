@@ -4,6 +4,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'form_question.freezed.dart';
 
+const maxPredefinedChoicePerQuestion = 5;
+
 @freezed
 sealed class FormQuestion with _$FormQuestion {
   const factory FormQuestion.multiChoice({
@@ -11,6 +13,8 @@ sealed class FormQuestion with _$FormQuestion {
     @Default('') String question,
     @Default(QuestionType.multiChoice) QuestionType type,
     @Default([]) List<Choice> choices,
+    @Default(false) bool isRequired,
+    @Default('') String selectedChoiceId,
     Choice? other,
   }) = FormQuestionMultiChoice;
 
@@ -19,5 +23,8 @@ sealed class FormQuestion with _$FormQuestion {
     @Default('') String question,
     @Default('') String answer,
     @Default(QuestionType.paragraph) QuestionType type,
+    @Default(false) bool isRequired,
   }) = FormQuestionParagraph;
 }
+
+extension FormQuestionX on FormQuestion {}

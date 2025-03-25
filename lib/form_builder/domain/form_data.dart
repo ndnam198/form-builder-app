@@ -19,7 +19,8 @@ abstract class FormData with _$FormData {
     String? name,
     String? description,
   }) {
-    assert(name != null || description != null, 'title or description must not be null');
+    assert(name != null || description != null,
+        'title or description must not be null');
     return copyWith(
       formTitle: formTitle.copyWith(
         name: name ?? formTitle.name,
@@ -30,6 +31,5 @@ abstract class FormData with _$FormData {
 
   static const empty = FormData(
     id: '',
-    formTitle: FormTitle.empty,
   );
 }

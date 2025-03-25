@@ -18,6 +18,7 @@ mixin _$FormQuestion {
   String get id;
   String get question;
   QuestionType get type;
+  bool get isRequired;
 
   /// Create a copy of FormQuestion
   /// with the given fields replaced by the non-null parameter values.
@@ -35,15 +36,17 @@ mixin _$FormQuestion {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.question, question) ||
                 other.question == question) &&
-            (identical(other.type, type) || other.type == type));
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.isRequired, isRequired) ||
+                other.isRequired == isRequired));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, question, type);
+  int get hashCode => Object.hash(runtimeType, id, question, type, isRequired);
 
   @override
   String toString() {
-    return 'FormQuestion(id: $id, question: $question, type: $type)';
+    return 'FormQuestion(id: $id, question: $question, type: $type, isRequired: $isRequired)';
   }
 }
 
@@ -53,7 +56,7 @@ abstract mixin class $FormQuestionCopyWith<$Res> {
           FormQuestion value, $Res Function(FormQuestion) _then) =
       _$FormQuestionCopyWithImpl;
   @useResult
-  $Res call({String id, String question, QuestionType type});
+  $Res call({String id, String question, QuestionType type, bool isRequired});
 }
 
 /// @nodoc
@@ -71,6 +74,7 @@ class _$FormQuestionCopyWithImpl<$Res> implements $FormQuestionCopyWith<$Res> {
     Object? id = null,
     Object? question = null,
     Object? type = null,
+    Object? isRequired = null,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -85,6 +89,10 @@ class _$FormQuestionCopyWithImpl<$Res> implements $FormQuestionCopyWith<$Res> {
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
               as QuestionType,
+      isRequired: null == isRequired
+          ? _self.isRequired
+          : isRequired // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -97,6 +105,8 @@ class FormQuestionMultiChoice implements FormQuestion {
       this.question = '',
       this.type = QuestionType.multiChoice,
       final List<Choice> choices = const [],
+      this.isRequired = false,
+      this.selectedChoiceId = '',
       this.other})
       : _choices = choices;
 
@@ -116,6 +126,11 @@ class FormQuestionMultiChoice implements FormQuestion {
     return EqualUnmodifiableListView(_choices);
   }
 
+  @override
+  @JsonKey()
+  final bool isRequired;
+  @JsonKey()
+  final String selectedChoiceId;
   final Choice? other;
 
   /// Create a copy of FormQuestion
@@ -137,16 +152,27 @@ class FormQuestionMultiChoice implements FormQuestion {
                 other.question == question) &&
             (identical(other.type, type) || other.type == type) &&
             const DeepCollectionEquality().equals(other._choices, _choices) &&
+            (identical(other.isRequired, isRequired) ||
+                other.isRequired == isRequired) &&
+            (identical(other.selectedChoiceId, selectedChoiceId) ||
+                other.selectedChoiceId == selectedChoiceId) &&
             (identical(other.other, this.other) || other.other == this.other));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, question, type,
-      const DeepCollectionEquality().hash(_choices), other);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      question,
+      type,
+      const DeepCollectionEquality().hash(_choices),
+      isRequired,
+      selectedChoiceId,
+      other);
 
   @override
   String toString() {
-    return 'FormQuestion.multiChoice(id: $id, question: $question, type: $type, choices: $choices, other: $other)';
+    return 'FormQuestion.multiChoice(id: $id, question: $question, type: $type, choices: $choices, isRequired: $isRequired, selectedChoiceId: $selectedChoiceId, other: $other)';
   }
 }
 
@@ -163,6 +189,8 @@ abstract mixin class $FormQuestionMultiChoiceCopyWith<$Res>
       String question,
       QuestionType type,
       List<Choice> choices,
+      bool isRequired,
+      String selectedChoiceId,
       Choice? other});
 
   $ChoiceCopyWith<$Res>? get other;
@@ -185,6 +213,8 @@ class _$FormQuestionMultiChoiceCopyWithImpl<$Res>
     Object? question = null,
     Object? type = null,
     Object? choices = null,
+    Object? isRequired = null,
+    Object? selectedChoiceId = null,
     Object? other = freezed,
   }) {
     return _then(FormQuestionMultiChoice(
@@ -204,6 +234,14 @@ class _$FormQuestionMultiChoiceCopyWithImpl<$Res>
           ? _self._choices
           : choices // ignore: cast_nullable_to_non_nullable
               as List<Choice>,
+      isRequired: null == isRequired
+          ? _self.isRequired
+          : isRequired // ignore: cast_nullable_to_non_nullable
+              as bool,
+      selectedChoiceId: null == selectedChoiceId
+          ? _self.selectedChoiceId
+          : selectedChoiceId // ignore: cast_nullable_to_non_nullable
+              as String,
       other: freezed == other
           ? _self.other
           : other // ignore: cast_nullable_to_non_nullable
@@ -233,7 +271,8 @@ class FormQuestionParagraph implements FormQuestion {
       {required this.id,
       this.question = '',
       this.answer = '',
-      this.type = QuestionType.paragraph});
+      this.type = QuestionType.paragraph,
+      this.isRequired = false});
 
   @override
   final String id;
@@ -245,6 +284,9 @@ class FormQuestionParagraph implements FormQuestion {
   @override
   @JsonKey()
   final QuestionType type;
+  @override
+  @JsonKey()
+  final bool isRequired;
 
   /// Create a copy of FormQuestion
   /// with the given fields replaced by the non-null parameter values.
@@ -264,15 +306,18 @@ class FormQuestionParagraph implements FormQuestion {
             (identical(other.question, question) ||
                 other.question == question) &&
             (identical(other.answer, answer) || other.answer == answer) &&
-            (identical(other.type, type) || other.type == type));
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.isRequired, isRequired) ||
+                other.isRequired == isRequired));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, question, answer, type);
+  int get hashCode =>
+      Object.hash(runtimeType, id, question, answer, type, isRequired);
 
   @override
   String toString() {
-    return 'FormQuestion.paragraph(id: $id, question: $question, answer: $answer, type: $type)';
+    return 'FormQuestion.paragraph(id: $id, question: $question, answer: $answer, type: $type, isRequired: $isRequired)';
   }
 }
 
@@ -284,7 +329,12 @@ abstract mixin class $FormQuestionParagraphCopyWith<$Res>
       _$FormQuestionParagraphCopyWithImpl;
   @override
   @useResult
-  $Res call({String id, String question, String answer, QuestionType type});
+  $Res call(
+      {String id,
+      String question,
+      String answer,
+      QuestionType type,
+      bool isRequired});
 }
 
 /// @nodoc
@@ -304,6 +354,7 @@ class _$FormQuestionParagraphCopyWithImpl<$Res>
     Object? question = null,
     Object? answer = null,
     Object? type = null,
+    Object? isRequired = null,
   }) {
     return _then(FormQuestionParagraph(
       id: null == id
@@ -322,6 +373,10 @@ class _$FormQuestionParagraphCopyWithImpl<$Res>
           ? _self.type
           : type // ignore: cast_nullable_to_non_nullable
               as QuestionType,
+      isRequired: null == isRequired
+          ? _self.isRequired
+          : isRequired // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }

@@ -17,7 +17,6 @@ T _$identity<T>(T value) => value;
 mixin _$Choice {
   String get id;
   String get description;
-  bool get isSelected;
 
   /// Create a copy of Choice
   /// with the given fields replaced by the non-null parameter values.
@@ -33,17 +32,15 @@ mixin _$Choice {
             other is Choice &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.isSelected, isSelected) ||
-                other.isSelected == isSelected));
+                other.description == description));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, description, isSelected);
+  int get hashCode => Object.hash(runtimeType, id, description);
 
   @override
   String toString() {
-    return 'Choice(id: $id, description: $description, isSelected: $isSelected)';
+    return 'Choice(id: $id, description: $description)';
   }
 }
 
@@ -52,7 +49,7 @@ abstract mixin class $ChoiceCopyWith<$Res> {
   factory $ChoiceCopyWith(Choice value, $Res Function(Choice) _then) =
       _$ChoiceCopyWithImpl;
   @useResult
-  $Res call({String id, String description, bool isSelected});
+  $Res call({String id, String description});
 }
 
 /// @nodoc
@@ -69,7 +66,6 @@ class _$ChoiceCopyWithImpl<$Res> implements $ChoiceCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? description = null,
-    Object? isSelected = null,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -80,10 +76,6 @@ class _$ChoiceCopyWithImpl<$Res> implements $ChoiceCopyWith<$Res> {
           ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      isSelected: null == isSelected
-          ? _self.isSelected
-          : isSelected // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
@@ -91,22 +83,13 @@ class _$ChoiceCopyWithImpl<$Res> implements $ChoiceCopyWith<$Res> {
 /// @nodoc
 
 class ChoicePredefined implements Choice {
-  const ChoicePredefined(
-      {required this.id,
-      this.description = '',
-      this.isRequired = false,
-      this.isSelected = false});
+  const ChoicePredefined({required this.id, this.description = ''});
 
   @override
   final String id;
   @override
   @JsonKey()
   final String description;
-  @JsonKey()
-  final bool isRequired;
-  @override
-  @JsonKey()
-  final bool isSelected;
 
   /// Create a copy of Choice
   /// with the given fields replaced by the non-null parameter values.
@@ -123,20 +106,15 @@ class ChoicePredefined implements Choice {
             other is ChoicePredefined &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.isRequired, isRequired) ||
-                other.isRequired == isRequired) &&
-            (identical(other.isSelected, isSelected) ||
-                other.isSelected == isSelected));
+                other.description == description));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, description, isRequired, isSelected);
+  int get hashCode => Object.hash(runtimeType, id, description);
 
   @override
   String toString() {
-    return 'Choice.predefined(id: $id, description: $description, isRequired: $isRequired, isSelected: $isSelected)';
+    return 'Choice.predefined(id: $id, description: $description)';
   }
 }
 
@@ -148,7 +126,7 @@ abstract mixin class $ChoicePredefinedCopyWith<$Res>
       _$ChoicePredefinedCopyWithImpl;
   @override
   @useResult
-  $Res call({String id, String description, bool isRequired, bool isSelected});
+  $Res call({String id, String description});
 }
 
 /// @nodoc
@@ -166,8 +144,6 @@ class _$ChoicePredefinedCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? description = null,
-    Object? isRequired = null,
-    Object? isSelected = null,
   }) {
     return _then(ChoicePredefined(
       id: null == id
@@ -178,14 +154,6 @@ class _$ChoicePredefinedCopyWithImpl<$Res>
           ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      isRequired: null == isRequired
-          ? _self.isRequired
-          : isRequired // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isSelected: null == isSelected
-          ? _self.isSelected
-          : isSelected // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
@@ -193,17 +161,13 @@ class _$ChoicePredefinedCopyWithImpl<$Res>
 /// @nodoc
 
 class ChoiceUserDefined implements Choice {
-  const ChoiceUserDefined(
-      {required this.id, this.description = '', this.isSelected = false});
+  const ChoiceUserDefined({required this.id, this.description = ''});
 
   @override
   final String id;
   @override
   @JsonKey()
   final String description;
-  @override
-  @JsonKey()
-  final bool isSelected;
 
   /// Create a copy of Choice
   /// with the given fields replaced by the non-null parameter values.
@@ -220,17 +184,15 @@ class ChoiceUserDefined implements Choice {
             other is ChoiceUserDefined &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.isSelected, isSelected) ||
-                other.isSelected == isSelected));
+                other.description == description));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, description, isSelected);
+  int get hashCode => Object.hash(runtimeType, id, description);
 
   @override
   String toString() {
-    return 'Choice.userDefined(id: $id, description: $description, isSelected: $isSelected)';
+    return 'Choice.userDefined(id: $id, description: $description)';
   }
 }
 
@@ -242,7 +204,7 @@ abstract mixin class $ChoiceUserDefinedCopyWith<$Res>
       _$ChoiceUserDefinedCopyWithImpl;
   @override
   @useResult
-  $Res call({String id, String description, bool isSelected});
+  $Res call({String id, String description});
 }
 
 /// @nodoc
@@ -260,7 +222,6 @@ class _$ChoiceUserDefinedCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? description = null,
-    Object? isSelected = null,
   }) {
     return _then(ChoiceUserDefined(
       id: null == id
@@ -271,10 +232,6 @@ class _$ChoiceUserDefinedCopyWithImpl<$Res>
           ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      isSelected: null == isSelected
-          ? _self.isSelected
-          : isSelected // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
