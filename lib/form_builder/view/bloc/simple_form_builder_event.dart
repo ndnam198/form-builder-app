@@ -21,7 +21,6 @@ sealed class SimpleFormBuilderEvent with _$SimpleFormBuilderEvent {
   const factory SimpleFormBuilderEvent.addChoice({
     required String questionId,
     required String description,
-    required bool isRequired,
   }) = SimpleFormBuilderEventAddChoice;
 
   const factory SimpleFormBuilderEvent.updateQuestionType({

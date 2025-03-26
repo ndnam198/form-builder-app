@@ -43,11 +43,10 @@ class _TitleCardState extends State<TitleCard> {
 
   @override
   Widget build(BuildContext context) {
-    final defaultCardBorder = Theme.of(context).colorScheme.outline.withValues(
-          alpha: 0.2,
-        );
-    return SizedBox(
-      width: widget.width,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: widget.width,
+      ),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

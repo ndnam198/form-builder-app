@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_assignment/form_builder/domain/question_type.dart';
 import 'package:form_builder_assignment/form_builder/view/bloc/simple_form_builder_bloc.dart';
+import 'package:form_builder_assignment/form_builder/view/translation.dart';
 import 'package:form_builder_assignment/form_builder/view/widgets/question_card.dart';
 import 'package:form_builder_assignment/form_builder/view/widgets/title_card.dart';
 
@@ -39,7 +40,7 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
           if (state.error != FormBuilderError.none) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(_getErrorMessage(state.error)),
+                content: Text(state.error.translate()),
                 backgroundColor: Colors.red,
               ),
             );
@@ -77,6 +78,81 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
                           question: question,
                           isEditing: !state.isPreviewing,
                           width: 600,
+                          onAddChoice: (questionId, description, isRequired) {
+                            context.simpleFormBuilderBloc.add(
+                              SimpleFormBuilderEvent.addChoice(
+                                questionId: questionId,
+                                description: description,
+                              ),
+                            );
+                          },
+                          onAddUserChoice: (questionId, description) => context.simpleFormBuilderBloc.add(
+                            SimpleFormBuilderEvent.addUserChoice(
+                              questionId: questionId,
+                              description: description,
+                            ),
+                          ),
+                          onRemoveChoice: (questionId, choiceId) {
+                            context.simpleFormBuilderBloc.add(
+                              SimpleFormBuilderEvent.removeChoice(
+                                questionId: questionId,
+                                choiceId: choiceId,
+                              ),
+                            );
+                          },
+                          onRemoveQuestion: (questionId) {
+                            context.simpleFormBuilderBloc.add(
+                              SimpleFormBuilderEvent.removeQuestion(
+                                questionId,
+                              ),
+                            );
+                          },
+                          onUpdateChoiceOptions: (questionId, choiceId, description) {
+                            context.simpleFormBuilderBloc.add(
+                              SimpleFormBuilderEvent.updateChoiceOptions(
+                                questionId: questionId,
+                                choiceId: choiceId,
+                                description: description,
+                              ),
+                            );
+                          },
+                          onUpdateQuestion: (questionId, {isRequired, question}) {
+                            context.simpleFormBuilderBloc.add(
+                              SimpleFormBuilderEvent.updateQuestion(
+                                questionId: questionId,
+                                isRequired: isRequired,
+                                question: question,
+                              ),
+                            );
+                          },
+                          onUpdateQuestionType: (questionId, newType) {
+                            context.simpleFormBuilderBloc.add(
+                              SimpleFormBuilderEvent.updateQuestionType(
+                                questionId: questionId,
+                                newType: newType,
+                              ),
+                            );
+                          },
+                          onAnswerMultipleChoiceQuestion: state.isPreviewing
+                              ? (questionId, choiceId) {
+                                  context.simpleFormBuilderBloc.add(
+                                    SimpleFormBuilderEvent.answerMultipleChoiceQuestion(
+                                      questionId: questionId,
+                                      choiceId: choiceId,
+                                    ),
+                                  );
+                                }
+                              : null,
+                          onAnswerParagraphQuestion: state.isPreviewing
+                              ? (questionId, answer) {
+                                  context.simpleFormBuilderBloc.add(
+                                    SimpleFormBuilderEvent.answerParagraphQuestion(
+                                      questionId: questionId,
+                                      answer: answer,
+                                    ),
+                                  );
+                                }
+                              : null,
                         ),
                       ),
                     ),
@@ -108,22 +184,5 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
         ),
       ],
     );
-  }
-
-  String _getErrorMessage(FormBuilderError error) {
-    switch (error) {
-      case FormBuilderError.duplicatedQuestion:
-        return 'Question already exists';
-      case FormBuilderError.questionTypeMissing:
-        return 'Question type is required';
-      case FormBuilderError.formTitleEmpty:
-        return 'Form title cannot be empty';
-      case FormBuilderError.maximumChoiceExceeded:
-        return 'Maximum number of choices reached';
-      case FormBuilderError.maximumUserChoiceExceeded:
-        return 'Only one "Other" option is allowed';
-      case FormBuilderError.none:
-        return '';
-    }
   }
 }

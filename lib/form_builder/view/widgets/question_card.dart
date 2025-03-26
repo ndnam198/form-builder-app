@@ -3,6 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_assignment/form_builder/domain/choice.dart';
 import 'package:form_builder_assignment/form_builder/domain/form_question.dart';
 import 'package:form_builder_assignment/form_builder/domain/question_type.dart';
+import 'package:form_builder_assignment/form_builder/view/translation.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 class QuestionCard extends StatelessWidget {
@@ -318,14 +319,5 @@ class QuestionCard extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-extension on QuestionType {
-  String translate() {
-    return switch (this) {
-      QuestionType.multiChoice => 'Multiple Choice',
-      QuestionType.paragraph => 'Paragraph',
-    };
   }
 }

@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_builder_assignment/form_builder/domain/choice.dart';
@@ -12,7 +13,7 @@ part 'simple_form_builder_event.dart';
 part 'simple_form_builder_state.dart';
 
 class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuilderState> {
-  SimpleFormBuilderBloc() : super( SimpleFormBuilderState.initial()) {
+  SimpleFormBuilderBloc() : super(SimpleFormBuilderState.initial()) {
     on<SimpleFormBuilderEventUpdateFormTitle>(_onUpdateFormTitle);
     on<SimpleFormBuilderEventAddQuestion>(_onAddQuestion);
     on<SimpleFormBuilderEventUpdateQuestion>(_onUpdateQuestion);
@@ -51,18 +52,6 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
   ) {
     late FormQuestion question;
 
-    /// check if question is duplicated with any created question
-    if (state.questions.any((e) {
-      return e.question == event.question && e.type == event.type;
-    })) {
-      emit(
-        state.copyWith(
-          error: FormBuilderError.duplicatedQuestion,
-        ),
-      );
-      return;
-    }
-
     switch (event.type) {
       case QuestionType.multiChoice:
         question = FormQuestion.multiChoice(
@@ -91,6 +80,18 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
     SimpleFormBuilderEventUpdateQuestion event,
     Emitter<SimpleFormBuilderState> emit,
   ) {
+    // if question duplicated, update error
+    FormBuilderError? error;
+    if (event.question.isNotNullOrEmpty && state.questions.any((q) => q.question == event.question)) {
+      error = FormBuilderError.duplicatedQuestion;
+      emit(
+        state.copyWith(
+          error: error,
+        ),
+      );
+      return;
+    }
+
     emit(
       state.copyWith(
         questions: state.questions.map((q) {

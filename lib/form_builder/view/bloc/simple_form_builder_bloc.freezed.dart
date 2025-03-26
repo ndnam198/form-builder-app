@@ -276,13 +276,10 @@ class _$SimpleFormBuilderEventUpdateQuestionCopyWithImpl<$Res>
 
 class SimpleFormBuilderEventAddChoice implements SimpleFormBuilderEvent {
   const SimpleFormBuilderEventAddChoice(
-      {required this.questionId,
-      required this.description,
-      required this.isRequired});
+      {required this.questionId, required this.description});
 
   final String questionId;
   final String description;
-  final bool isRequired;
 
   /// Create a copy of SimpleFormBuilderEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -300,18 +297,15 @@ class SimpleFormBuilderEventAddChoice implements SimpleFormBuilderEvent {
             (identical(other.questionId, questionId) ||
                 other.questionId == questionId) &&
             (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.isRequired, isRequired) ||
-                other.isRequired == isRequired));
+                other.description == description));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, questionId, description, isRequired);
+  int get hashCode => Object.hash(runtimeType, questionId, description);
 
   @override
   String toString() {
-    return 'SimpleFormBuilderEvent.addChoice(questionId: $questionId, description: $description, isRequired: $isRequired)';
+    return 'SimpleFormBuilderEvent.addChoice(questionId: $questionId, description: $description)';
   }
 }
 
@@ -323,7 +317,7 @@ abstract mixin class $SimpleFormBuilderEventAddChoiceCopyWith<$Res>
           $Res Function(SimpleFormBuilderEventAddChoice) _then) =
       _$SimpleFormBuilderEventAddChoiceCopyWithImpl;
   @useResult
-  $Res call({String questionId, String description, bool isRequired});
+  $Res call({String questionId, String description});
 }
 
 /// @nodoc
@@ -340,7 +334,6 @@ class _$SimpleFormBuilderEventAddChoiceCopyWithImpl<$Res>
   $Res call({
     Object? questionId = null,
     Object? description = null,
-    Object? isRequired = null,
   }) {
     return _then(SimpleFormBuilderEventAddChoice(
       questionId: null == questionId
@@ -351,10 +344,6 @@ class _$SimpleFormBuilderEventAddChoiceCopyWithImpl<$Res>
           ? _self.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      isRequired: null == isRequired
-          ? _self.isRequired
-          : isRequired // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
