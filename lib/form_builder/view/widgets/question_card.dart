@@ -1,3 +1,5 @@
+import 'package:dartx/dartx.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_assignment/form_builder/domain/choice.dart';
@@ -10,8 +12,8 @@ class QuestionCard extends StatelessWidget {
   const QuestionCard({
     required this.question,
     required this.width,
+    required this.isEditing,
     super.key,
-    this.isEditing = true,
     this.onUpdateQuestion,
     this.onUpdateQuestionType,
     this.onAnswerMultipleChoiceQuestion,
@@ -32,7 +34,7 @@ class QuestionCard extends StatelessWidget {
   final void Function(String questionId, QuestionType newType)? onUpdateQuestionType;
   final void Function(String questionId, String choiceId)? onAnswerMultipleChoiceQuestion;
   // ignore: avoid_positional_boolean_parameters
-  final void Function(String questionId, String description, bool isRequired)? onAddChoice;
+  final void Function(String questionId, String description)? onAddChoice;
   final void Function(String questionId, String description)? onAddUserChoice;
   final void Function(String questionId, String choiceId, String description)? onUpdateChoiceOptions;
   final void Function(String questionId, String choiceId)? onRemoveChoice;
@@ -51,7 +53,9 @@ class QuestionCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildQuestionHeader(context),
-              const SizedBox(height: 16),
+              const SizedBox(
+                height: 16,
+              ),
               _buildQuestionContent(context),
               if (isEditing) _buildQuestionFooter(context),
             ],
@@ -65,38 +69,27 @@ class QuestionCard extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: isEditing
-              ? FormBuilderTextField(
-                  name: 'question_${question.id}',
-                  initialValue: question.question,
-                  decoration: const InputDecoration(
-                    labelText: 'Question',
-                    hintText: 'Enter your question',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                  ]),
-                  onChanged: (value) {
-                    if (value != null && onUpdateQuestion != null) {
-                      onUpdateQuestion!(
-                        question.id,
-                        question: value,
-                      );
-                    }
-                  },
-                )
-              : Text(
-                  question.question,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+          child: FormBuilderTextField(
+            enabled: isEditing,
+            name: 'question_${question.id}',
+            initialValue: question.question,
+            decoration: const InputDecoration(
+              labelText: 'Question',
+              hintText: 'Enter your question',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (value) {
+              if (value != null && onUpdateQuestion != null) {
+                onUpdateQuestion!(
+                  question.id,
+                  question: value,
+                );
+              }
+            },
+          ),
         ),
-        if (isEditing) ...[
-          const SizedBox(width: 8),
-          _buildTypeDropdown(context),
-        ],
+        const SizedBox(width: 8),
+        _buildTypeDropdown(context),
       ],
     );
   }
@@ -105,6 +98,7 @@ class QuestionCard extends StatelessWidget {
     return SizedBox(
       width: 140,
       child: FormBuilderDropdown<QuestionType>(
+        enabled: isEditing,
         name: 'question_type_${question.id}',
         decoration: const InputDecoration(
           labelText: 'Type',
@@ -146,6 +140,7 @@ class QuestionCard extends StatelessWidget {
     return SizedBox(
       width: width,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FormBuilderRadioGroup<String>(
@@ -153,13 +148,19 @@ class QuestionCard extends StatelessWidget {
             decoration: const InputDecoration(
               border: InputBorder.none,
             ),
-            initialValue: question.selectedChoiceId,
-            options: question.choices.map((choice) {
+            enabled: !isEditing,
+            options: question.choices.mapIndexed((index, choice) {
               return FormBuilderFieldOption(
+                key: Key(choice.id),
                 value: choice.id,
-                child: isEditing ? _buildEditableChoice(context, question.id, choice) : Text(choice.description),
+                child: _buildEditableChoice(context, question.id, choice, index),
               );
             }).toList(),
+            validator: question.isRequired
+                ? FormBuilderValidators.required(
+                    errorText: 'Please select an option.',
+                  )
+                : null,
             onChanged: isEditing
                 ? null
                 : (value) {
@@ -171,41 +172,42 @@ class QuestionCard extends StatelessWidget {
                     }
                   },
           ),
-          if (isEditing) ...[
+          if (isEditing && question.choices.length < maxPredefinedChoicePerQuestion) ...[
             const SizedBox(height: 8),
-            Row(
-              children: [
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.add, size: 16),
-                  label: const Text('Add Choice'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    textStyle: const TextStyle(fontSize: 14),
-                  ),
-                  onPressed: () {
-                    onAddChoice?.call(
-                      question.id,
-                      '',
-                      false,
-                    );
-                  },
+            RadioListTile<bool>(
+              tileColor: Colors.white,
+              contentPadding: EdgeInsets.zero,
+              title: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Add option',
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          onAddChoice?.call(question.id, '');
+                        },
+                    ),
+                    const TextSpan(
+                      text: ' or ',
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                    ),
+                    TextSpan(
+                      text: 'Add "Other"',
+                      style: const TextStyle(fontSize: 14, color: Colors.blue),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          onAddUserChoice?.call(question.id, '');
+                        },
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('Add "Other"'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    textStyle: const TextStyle(fontSize: 14),
-                  ),
-                  onPressed: () {
-                    onAddUserChoice?.call(
-                      question.id,
-                      'Other',
-                    );
-                  },
-                ),
-              ],
+              ),
+              groupValue: false,
+              value: true,
+              onChanged: (bool? value) {
+                onAddChoice?.call(question.id, '');
+              },
             ),
           ],
         ],
@@ -213,7 +215,7 @@ class QuestionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildEditableChoice(BuildContext context, String questionId, Choice choice) {
+  Widget _buildEditableChoice(BuildContext context, String questionId, Choice choice, int index) {
     final isUserDefined = choice is ChoiceUserDefined;
 
     return SizedBox(
@@ -225,11 +227,12 @@ class QuestionCard extends StatelessWidget {
               name: 'choice_${choice.id}',
               initialValue: choice.description,
               decoration: InputDecoration(
-                hintText: isUserDefined ? 'Other option' : 'Enter choice',
-                border: const OutlineInputBorder(),
+                hintText: isUserDefined ? 'Other...' : 'Option ${index + 1}',
+                border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 isDense: true,
               ),
+              enabled: isEditing ? choice is ChoicePredefined : choice is ChoiceUserDefined,
               onChanged: (value) {
                 if (value != null && onUpdateChoiceOptions != null) {
                   onUpdateChoiceOptions!(
@@ -237,21 +240,23 @@ class QuestionCard extends StatelessWidget {
                     choice.id,
                     value,
                   );
+                  FocusScope.of(context).nextFocus();
                 }
               },
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.delete, size: 20),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            onPressed: () {
-              onRemoveChoice?.call(
-                questionId,
-                choice.id,
-              );
-            },
-          ),
+          if (isEditing)
+            IconButton(
+              icon: const Icon(Icons.close, size: 20),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onPressed: () {
+                onRemoveChoice?.call(
+                  questionId,
+                  choice.id,
+                );
+              },
+            ),
         ],
       ),
     );
@@ -262,9 +267,10 @@ class QuestionCard extends StatelessWidget {
       name: 'paragraph_${question.id}',
       initialValue: question.answer,
       decoration: const InputDecoration(
-        hintText: 'Enter your answer',
+        hintText: 'Long answer text',
         border: OutlineInputBorder(),
       ),
+      validator: question.isRequired ? FormBuilderValidators.required() : null,
       maxLines: 3,
       enabled: !isEditing,
       onChanged: (value) {
@@ -300,7 +306,7 @@ class QuestionCard extends StatelessWidget {
                 const Text(
                   'Required',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                   ),
                 ),
                 const SizedBox(width: 8),

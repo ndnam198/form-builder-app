@@ -9,8 +9,8 @@ abstract class FormData with _$FormData {
   const factory FormData({
     required String id,
     @Default(FormTitle.empty) FormTitle formTitle,
-    DateTime? createdAt,
     @Default([]) List<FormQuestion> questions,
+    DateTime? submittedAt,
   }) = _FormData;
 
   const FormData._();

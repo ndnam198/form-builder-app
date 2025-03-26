@@ -38,6 +38,7 @@ class _DebugPageState extends State<DebugPage> {
         isRequired: true,
       ),
       width: 600,
+      isEditing: true,
     );
   }
 

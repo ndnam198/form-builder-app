@@ -2,9 +2,11 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_builder_assignment/form_builder/domain/choice.dart';
+import 'package:form_builder_assignment/form_builder/domain/form_data.dart';
 import 'package:form_builder_assignment/form_builder/domain/form_question.dart';
 import 'package:form_builder_assignment/form_builder/domain/form_title.dart';
 import 'package:form_builder_assignment/form_builder/domain/question_type.dart';
+import 'package:form_builder_assignment/utils/logger.dart';
 import 'package:form_builder_assignment/utils/uuid_generator.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -30,6 +32,7 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
       _onAnswerParagraphQuestion,
     );
     on<SimpleFormBuilderEventTogglePreview>(_onTogglePreview);
+    on<SimpleFormBuilderEventSubmitForm>(_onSubmitForm);
   }
 
   void _onUpdateFormTitle(
@@ -80,7 +83,6 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
     SimpleFormBuilderEventUpdateQuestion event,
     Emitter<SimpleFormBuilderState> emit,
   ) {
-    // if question duplicated, update error
     FormBuilderError? error;
     if (event.question.isNotNullOrEmpty && state.questions.any((q) => q.question == event.question)) {
       error = FormBuilderError.duplicatedQuestion;
@@ -204,16 +206,13 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
 
         final multiChoiceQuestion = q as FormQuestionMultiChoice;
 
-        // Check if a user choice already exists
         final hasUserChoice = multiChoiceQuestion.choices.any((choice) => choice is ChoiceUserDefined);
 
-        // If a user choice already exists, set an error and return the question unchanged
         if (hasUserChoice) {
           error = FormBuilderError.maximumUserChoiceExceeded;
           return q;
         }
 
-        // Create a new user choice
         final newUserChoice = ChoiceUserDefined(
           id: generateUuid(),
           description: event.description ?? '',
@@ -240,12 +239,10 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
   ) {
     final updatedQuestions = state.questions.map((q) {
       if (q.id == event.questionId) {
-        // If the question type is already the same, no need to change
         if (q.type == event.newType) {
           return q;
         }
 
-        // Create a new question with the updated type
         switch (event.newType) {
           case QuestionType.multiChoice:
             return FormQuestion.multiChoice(
@@ -288,24 +285,30 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
 
         final multiChoiceQuestion = q as FormQuestionMultiChoice;
 
-        // Count existing predefined choices
         final predefinedChoicesCount = multiChoiceQuestion.choices.whereType<ChoicePredefined>().length;
 
-        // Check if we've reached the maximum number of predefined choices
         if (predefinedChoicesCount >= maxPredefinedChoicePerQuestion) {
           error = FormBuilderError.maximumChoiceExceeded;
-          // Return the question unchanged if we've reached the limit
+
           return q;
         }
 
-        // Create a new predefined choice
         final newChoice = ChoicePredefined(
           id: generateUuid(),
           description: event.description,
         );
 
+        var updatedChoice = <Choice>[];
+        final userChoice = multiChoiceQuestion.choices.whereType<ChoiceUserDefined>().firstOrNull;
+        if (userChoice != null) {
+          final predefinedChoices = multiChoiceQuestion.choices.whereType<ChoicePredefined>().toList();
+          updatedChoice = [...predefinedChoices, newChoice, userChoice];
+        } else {
+          updatedChoice = [...multiChoiceQuestion.choices, newChoice];
+        }
+
         return multiChoiceQuestion.copyWith(
-          choices: [...multiChoiceQuestion.choices, newChoice],
+          choices: updatedChoice,
         );
       }
       return q;
@@ -379,6 +382,49 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
   ) {
     emit(
       state.copyWith(isPreviewing: !state.isPreviewing),
+    );
+    talker.debug('isPreviewing: ${state.isPreviewing}');
+  }
+
+  void _onSubmitForm(
+    SimpleFormBuilderEventSubmitForm event,
+    Emitter<SimpleFormBuilderState> emit,
+  ) {
+    final unansweredRequiredQuestions = state.questions.where((question) {
+      if (!question.isRequired) return false;
+
+      if (question is FormQuestionMultiChoice) {
+        return question.selectedChoiceId.isEmpty;
+      } else if (question is FormQuestionParagraph) {
+        return question.answer.isEmpty;
+      }
+
+      return false;
+    }).toList();
+
+    if (unansweredRequiredQuestions.isNotEmpty) {
+      emit(
+        state.copyWith(
+          error: FormBuilderError.requiredQuestionsNotAnswered,
+        ),
+      );
+      return;
+    }
+
+    final response = FormData(
+      id: generateUuid(),
+      formTitle: state.formTitle,
+      questions: state.questions,
+      submittedAt: DateTime.now(),
+    );
+
+    final updatedResponses = [...state.responses, response];
+
+    emit(
+      state.copyWith(
+        responses: updatedResponses,
+        error: FormBuilderError.none,
+      ),
     );
   }
 }

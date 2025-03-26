@@ -17,8 +17,8 @@ T _$identity<T>(T value) => value;
 mixin _$FormData {
   String get id;
   FormTitle get formTitle;
-  DateTime? get createdAt;
   List<FormQuestion> get questions;
+  DateTime? get submittedAt;
 
   /// Create a copy of FormData
   /// with the given fields replaced by the non-null parameter values.
@@ -35,18 +35,18 @@ mixin _$FormData {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.formTitle, formTitle) ||
                 other.formTitle == formTitle) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            const DeepCollectionEquality().equals(other.questions, questions));
+            const DeepCollectionEquality().equals(other.questions, questions) &&
+            (identical(other.submittedAt, submittedAt) ||
+                other.submittedAt == submittedAt));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, formTitle, createdAt,
-      const DeepCollectionEquality().hash(questions));
+  int get hashCode => Object.hash(runtimeType, id, formTitle,
+      const DeepCollectionEquality().hash(questions), submittedAt);
 
   @override
   String toString() {
-    return 'FormData(id: $id, formTitle: $formTitle, createdAt: $createdAt, questions: $questions)';
+    return 'FormData(id: $id, formTitle: $formTitle, questions: $questions, submittedAt: $submittedAt)';
   }
 }
 
@@ -58,8 +58,8 @@ abstract mixin class $FormDataCopyWith<$Res> {
   $Res call(
       {String id,
       FormTitle formTitle,
-      DateTime? createdAt,
-      List<FormQuestion> questions});
+      List<FormQuestion> questions,
+      DateTime? submittedAt});
 
   $FormTitleCopyWith<$Res> get formTitle;
 }
@@ -78,8 +78,8 @@ class _$FormDataCopyWithImpl<$Res> implements $FormDataCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? formTitle = null,
-    Object? createdAt = freezed,
     Object? questions = null,
+    Object? submittedAt = freezed,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -90,14 +90,14 @@ class _$FormDataCopyWithImpl<$Res> implements $FormDataCopyWith<$Res> {
           ? _self.formTitle
           : formTitle // ignore: cast_nullable_to_non_nullable
               as FormTitle,
-      createdAt: freezed == createdAt
-          ? _self.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       questions: null == questions
           ? _self.questions
           : questions // ignore: cast_nullable_to_non_nullable
               as List<FormQuestion>,
+      submittedAt: freezed == submittedAt
+          ? _self.submittedAt
+          : submittedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 
@@ -118,8 +118,8 @@ class _FormData extends FormData {
   const _FormData(
       {required this.id,
       this.formTitle = FormTitle.empty,
-      this.createdAt,
-      final List<FormQuestion> questions = const []})
+      final List<FormQuestion> questions = const [],
+      this.submittedAt})
       : _questions = questions,
         super._();
 
@@ -128,8 +128,6 @@ class _FormData extends FormData {
   @override
   @JsonKey()
   final FormTitle formTitle;
-  @override
-  final DateTime? createdAt;
   final List<FormQuestion> _questions;
   @override
   @JsonKey()
@@ -138,6 +136,9 @@ class _FormData extends FormData {
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_questions);
   }
+
+  @override
+  final DateTime? submittedAt;
 
   /// Create a copy of FormData
   /// with the given fields replaced by the non-null parameter values.
@@ -155,19 +156,19 @@ class _FormData extends FormData {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.formTitle, formTitle) ||
                 other.formTitle == formTitle) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
             const DeepCollectionEquality()
-                .equals(other._questions, _questions));
+                .equals(other._questions, _questions) &&
+            (identical(other.submittedAt, submittedAt) ||
+                other.submittedAt == submittedAt));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, formTitle, createdAt,
-      const DeepCollectionEquality().hash(_questions));
+  int get hashCode => Object.hash(runtimeType, id, formTitle,
+      const DeepCollectionEquality().hash(_questions), submittedAt);
 
   @override
   String toString() {
-    return 'FormData(id: $id, formTitle: $formTitle, createdAt: $createdAt, questions: $questions)';
+    return 'FormData(id: $id, formTitle: $formTitle, questions: $questions, submittedAt: $submittedAt)';
   }
 }
 
@@ -181,8 +182,8 @@ abstract mixin class _$FormDataCopyWith<$Res>
   $Res call(
       {String id,
       FormTitle formTitle,
-      DateTime? createdAt,
-      List<FormQuestion> questions});
+      List<FormQuestion> questions,
+      DateTime? submittedAt});
 
   @override
   $FormTitleCopyWith<$Res> get formTitle;
@@ -202,8 +203,8 @@ class __$FormDataCopyWithImpl<$Res> implements _$FormDataCopyWith<$Res> {
   $Res call({
     Object? id = null,
     Object? formTitle = null,
-    Object? createdAt = freezed,
     Object? questions = null,
+    Object? submittedAt = freezed,
   }) {
     return _then(_FormData(
       id: null == id
@@ -214,14 +215,14 @@ class __$FormDataCopyWithImpl<$Res> implements _$FormDataCopyWith<$Res> {
           ? _self.formTitle
           : formTitle // ignore: cast_nullable_to_non_nullable
               as FormTitle,
-      createdAt: freezed == createdAt
-          ? _self.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       questions: null == questions
           ? _self._questions
           : questions // ignore: cast_nullable_to_non_nullable
               as List<FormQuestion>,
+      submittedAt: freezed == submittedAt
+          ? _self.submittedAt
+          : submittedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 

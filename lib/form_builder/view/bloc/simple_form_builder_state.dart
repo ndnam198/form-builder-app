@@ -8,6 +8,7 @@ abstract class SimpleFormBuilderState with _$SimpleFormBuilderState {
     @Default(false) bool isPreviewing,
     @Default(FormBuilderError.none) FormBuilderError error,
     @Default(false) bool isLoading,
+    @Default([]) List<FormData> responses,
   }) = _SimpleFormBuilderState;
 
   factory SimpleFormBuilderState.initial() => SimpleFormBuilderState(
@@ -15,7 +16,6 @@ abstract class SimpleFormBuilderState with _$SimpleFormBuilderState {
           FormQuestion.paragraph(
             id: generateUuid(),
             question: 'Untitled Question',
-            answer: 'Long answer text',
           ),
         ],
       );
@@ -27,5 +27,6 @@ enum FormBuilderError {
   formTitleEmpty,
   maximumChoiceExceeded,
   maximumUserChoiceExceeded,
+  requiredQuestionsNotAnswered,
   none,
 }

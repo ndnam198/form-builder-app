@@ -954,12 +954,34 @@ class SimpleFormBuilderEventTogglePreview implements SimpleFormBuilderEvent {
 }
 
 /// @nodoc
+
+class SimpleFormBuilderEventSubmitForm implements SimpleFormBuilderEvent {
+  const SimpleFormBuilderEventSubmitForm();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SimpleFormBuilderEventSubmitForm);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'SimpleFormBuilderEvent.submitForm()';
+  }
+}
+
+/// @nodoc
 mixin _$SimpleFormBuilderState {
   FormTitle get formTitle;
   List<FormQuestion> get questions;
   bool get isPreviewing;
   FormBuilderError get error;
   bool get isLoading;
+  List<FormData> get responses;
 
   /// Create a copy of SimpleFormBuilderState
   /// with the given fields replaced by the non-null parameter values.
@@ -981,7 +1003,8 @@ mixin _$SimpleFormBuilderState {
                 other.isPreviewing == isPreviewing) &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.isLoading, isLoading) ||
-                other.isLoading == isLoading));
+                other.isLoading == isLoading) &&
+            const DeepCollectionEquality().equals(other.responses, responses));
   }
 
   @override
@@ -991,11 +1014,12 @@ mixin _$SimpleFormBuilderState {
       const DeepCollectionEquality().hash(questions),
       isPreviewing,
       error,
-      isLoading);
+      isLoading,
+      const DeepCollectionEquality().hash(responses));
 
   @override
   String toString() {
-    return 'SimpleFormBuilderState(formTitle: $formTitle, questions: $questions, isPreviewing: $isPreviewing, error: $error, isLoading: $isLoading)';
+    return 'SimpleFormBuilderState(formTitle: $formTitle, questions: $questions, isPreviewing: $isPreviewing, error: $error, isLoading: $isLoading, responses: $responses)';
   }
 }
 
@@ -1010,7 +1034,8 @@ abstract mixin class $SimpleFormBuilderStateCopyWith<$Res> {
       List<FormQuestion> questions,
       bool isPreviewing,
       FormBuilderError error,
-      bool isLoading});
+      bool isLoading,
+      List<FormData> responses});
 
   $FormTitleCopyWith<$Res> get formTitle;
 }
@@ -1033,6 +1058,7 @@ class _$SimpleFormBuilderStateCopyWithImpl<$Res>
     Object? isPreviewing = null,
     Object? error = null,
     Object? isLoading = null,
+    Object? responses = null,
   }) {
     return _then(_self.copyWith(
       formTitle: null == formTitle
@@ -1055,6 +1081,10 @@ class _$SimpleFormBuilderStateCopyWithImpl<$Res>
           ? _self.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      responses: null == responses
+          ? _self.responses
+          : responses // ignore: cast_nullable_to_non_nullable
+              as List<FormData>,
     ));
   }
 
@@ -1077,8 +1107,10 @@ class _SimpleFormBuilderState implements SimpleFormBuilderState {
       final List<FormQuestion> questions = const [],
       this.isPreviewing = false,
       this.error = FormBuilderError.none,
-      this.isLoading = false})
-      : _questions = questions;
+      this.isLoading = false,
+      final List<FormData> responses = const []})
+      : _questions = questions,
+        _responses = responses;
 
   @override
   @JsonKey()
@@ -1101,6 +1133,14 @@ class _SimpleFormBuilderState implements SimpleFormBuilderState {
   @override
   @JsonKey()
   final bool isLoading;
+  final List<FormData> _responses;
+  @override
+  @JsonKey()
+  List<FormData> get responses {
+    if (_responses is EqualUnmodifiableListView) return _responses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_responses);
+  }
 
   /// Create a copy of SimpleFormBuilderState
   /// with the given fields replaced by the non-null parameter values.
@@ -1124,7 +1164,9 @@ class _SimpleFormBuilderState implements SimpleFormBuilderState {
                 other.isPreviewing == isPreviewing) &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.isLoading, isLoading) ||
-                other.isLoading == isLoading));
+                other.isLoading == isLoading) &&
+            const DeepCollectionEquality()
+                .equals(other._responses, _responses));
   }
 
   @override
@@ -1134,11 +1176,12 @@ class _SimpleFormBuilderState implements SimpleFormBuilderState {
       const DeepCollectionEquality().hash(_questions),
       isPreviewing,
       error,
-      isLoading);
+      isLoading,
+      const DeepCollectionEquality().hash(_responses));
 
   @override
   String toString() {
-    return 'SimpleFormBuilderState(formTitle: $formTitle, questions: $questions, isPreviewing: $isPreviewing, error: $error, isLoading: $isLoading)';
+    return 'SimpleFormBuilderState(formTitle: $formTitle, questions: $questions, isPreviewing: $isPreviewing, error: $error, isLoading: $isLoading, responses: $responses)';
   }
 }
 
@@ -1155,7 +1198,8 @@ abstract mixin class _$SimpleFormBuilderStateCopyWith<$Res>
       List<FormQuestion> questions,
       bool isPreviewing,
       FormBuilderError error,
-      bool isLoading});
+      bool isLoading,
+      List<FormData> responses});
 
   @override
   $FormTitleCopyWith<$Res> get formTitle;
@@ -1179,6 +1223,7 @@ class __$SimpleFormBuilderStateCopyWithImpl<$Res>
     Object? isPreviewing = null,
     Object? error = null,
     Object? isLoading = null,
+    Object? responses = null,
   }) {
     return _then(_SimpleFormBuilderState(
       formTitle: null == formTitle
@@ -1201,6 +1246,10 @@ class __$SimpleFormBuilderStateCopyWithImpl<$Res>
           ? _self.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      responses: null == responses
+          ? _self._responses
+          : responses // ignore: cast_nullable_to_non_nullable
+              as List<FormData>,
     ));
   }
 

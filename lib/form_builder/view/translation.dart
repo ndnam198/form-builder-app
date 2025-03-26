@@ -18,6 +18,7 @@ extension FormBuilderErrorTranslation on FormBuilderError {
       FormBuilderError.formTitleEmpty => 'Form title cannot be empty',
       FormBuilderError.maximumChoiceExceeded => 'Maximum number of choices reached',
       FormBuilderError.maximumUserChoiceExceeded => 'Only one "Other" option is allowed',
+      FormBuilderError.requiredQuestionsNotAnswered => 'Please answer all required questions',
       FormBuilderError.none => '',
     };
   }

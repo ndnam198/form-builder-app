@@ -64,11 +64,6 @@ class _TitleCardState extends State<TitleCard> {
                 width: 8,
                 color: AC.purple,
               ),
-              // left: Focus.of(context).hasFocus
-              //     ? const BorderSide(
-              //         color: Color(0xff0084ff),
-              //       )
-              //     : BorderSide.none,
             ),
           ),
           child: Padding(
@@ -76,55 +71,40 @@ class _TitleCardState extends State<TitleCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (widget.isEditing)
-                  TextField(
-                    controller: _titleController,
-                    onChanged: widget.onTitleChanged,
-                    onSubmitted: widget.onTitleChanged,
-                    onEditingComplete: () {
-                      FocusScope.of(context).nextFocus();
-                    },
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                        ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                    ),
-                  )
-                else
-                  Text(
-                    widget.title,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                        ),
+                TextField(
+                  enabled: widget.isEditing,
+                  controller: _titleController,
+                  onChanged: widget.onTitleChanged,
+                  onSubmitted: widget.onTitleChanged,
+                  onEditingComplete: () {
+                    FocusScope.of(context).nextFocus();
+                  },
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
+                      ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
                   ),
+                ),
                 const SizedBox(height: 8),
-                if (widget.isEditing)
-                  TextField(
-                    controller: _descriptionController,
-                    onChanged: widget.onDescriptionChanged,
-                    onSubmitted: widget.onDescriptionChanged,
-                    onEditingComplete: () {
-                      FocusScope.of(context).unfocus();
-                    },
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.black54,
-                        ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                    ),
-                  )
-                else
-                  Text(
-                    widget.description,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.black54,
-                        ),
+                TextField(
+                  enabled: widget.isEditing,
+                  controller: _descriptionController,
+                  onChanged: widget.onDescriptionChanged,
+                  onSubmitted: widget.onDescriptionChanged,
+                  onEditingComplete: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.black54,
+                      ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
                   ),
+                ),
               ],
             ),
           ),

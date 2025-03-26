@@ -60,4 +60,5 @@ sealed class SimpleFormBuilderEvent with _$SimpleFormBuilderEvent {
 
   const factory SimpleFormBuilderEvent.createForm() = SimpleFormBuilderEventCreateForm;
   const factory SimpleFormBuilderEvent.togglePreview() = SimpleFormBuilderEventTogglePreview;
+  const factory SimpleFormBuilderEvent.submitForm() = SimpleFormBuilderEventSubmitForm;
 }
