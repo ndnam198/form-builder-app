@@ -23,7 +23,6 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
     final formWidth = isMobile ? (MediaQuery.of(context).size.width - 16 * 2) : 600.0;
 
     return Scaffold(
-      floatingActionButton: _buildFloatingAddButton(context),
       body: BlocConsumer<SimpleFormBuilderBloc, SimpleFormBuilderState>(
         listenWhen: (previous, current) => previous.error != current.error,
         listener: (context, state) {
@@ -41,7 +40,7 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   child: Center(
                     child: FormBuilder(
                       key: _formKey,
@@ -150,7 +149,21 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 80),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          if (!state.isPreviewing)
+                            TextButton(
+                              child: const Text('Add Question'),
+                              onPressed: () {
+                                context.simpleFormBuilderBloc.add(
+                                  const SimpleFormBuilderEvent.addQuestion(
+                                    type: QuestionType.paragraph,
+                                    question: '',
+                                  ),
+                                );
+                              },
+                            ),
                         ],
                       ),
                     ),
@@ -158,17 +171,61 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
                 ),
               ),
               if (state.isPreviewing)
+                SizedBox(
+                  width: formWidth,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FilledButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.saveAndValidate()) {
+                              context.simpleFormBuilderBloc.add(
+                                const SimpleFormBuilderEvent.submitForm(),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Form submitted successfully'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Submit'),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            context.simpleFormBuilderBloc.add(
+                              const SimpleFormBuilderEvent.togglePreview(),
+                            );
+                          },
+                          child: const Text('Back to edit'),
+                        ),
+                        const SizedBox(width: 8),
+                        TextButton(
+                          onPressed: () {
+                            context.simpleFormBuilderBloc.add(
+                              const SimpleFormBuilderEvent.clearFormAnswer(),
+                            );
+                          },
+                          child: const Text('Clear form'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(12),
                   child: FilledButton(
                     onPressed: () {
-                      if (_formKey.currentState!.saveAndValidate()) {
-                        context.simpleFormBuilderBloc.add(
-                          const SimpleFormBuilderEvent.submitForm(),
-                        );
-                      }
+                      context.simpleFormBuilderBloc.add(
+                        const SimpleFormBuilderEvent.togglePreview(),
+                      );
                     },
-                    child: const Text('Submit'),
+                    child: const Text('Preview'),
                   ),
                 ),
             ],
@@ -182,22 +239,6 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        BlocSelector<SimpleFormBuilderBloc, SimpleFormBuilderState, bool>(
-          selector: (state) {
-            return state.isPreviewing;
-          },
-          builder: (context, isPreviewing) {
-            return FloatingActionButton(
-              child: Icon(isPreviewing ? Icons.edit : Icons.question_answer),
-              onPressed: () {
-                context.simpleFormBuilderBloc.add(
-                  const SimpleFormBuilderEvent.togglePreview(),
-                );
-              },
-            );
-          },
-        ),
-        const SizedBox(height: 16),
         FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {

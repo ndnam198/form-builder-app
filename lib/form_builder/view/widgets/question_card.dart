@@ -13,6 +13,7 @@ class QuestionCard extends StatelessWidget {
     required this.question,
     required this.width,
     required this.isEditing,
+    this.isViewingOnly = false,
     super.key,
     this.onUpdateQuestion,
     this.onUpdateQuestionType,
@@ -27,6 +28,7 @@ class QuestionCard extends StatelessWidget {
 
   final FormQuestion question;
   final bool isEditing;
+  final bool isViewingOnly;
   final double width;
 
   // Callbacks
@@ -66,15 +68,32 @@ class QuestionCard extends StatelessWidget {
   }
 
   Widget _buildQuestionHeader(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: FormBuilderTextField(
-            enabled: isEditing,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Question',
+              style: TextStyle(fontSize: 12),
+            ),
+            if (question.isRequired)
+              const Text(
+                ' *',
+                style: TextStyle(color: Colors.red, fontSize: 12),
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (isEditing && !isViewingOnly)
+          FormBuilderTextField(
+            enabled: isEditing && !isViewingOnly,
             name: 'question_${question.id}',
             initialValue: question.question,
+            minLines: 1,
+            maxLines: 5,
             decoration: const InputDecoration(
-              labelText: 'Question',
               hintText: 'Enter your question',
               border: OutlineInputBorder(),
             ),
@@ -86,9 +105,13 @@ class QuestionCard extends StatelessWidget {
                 );
               }
             },
+          )
+        else
+          Text(
+            question.question,
+            style: const TextStyle(fontSize: 16),
           ),
-        ),
-        const SizedBox(width: 8),
+        const SizedBox(height: 12),
         _buildTypeDropdown(context),
       ],
     );
@@ -98,7 +121,7 @@ class QuestionCard extends StatelessWidget {
     return SizedBox(
       width: 140,
       child: FormBuilderDropdown<QuestionType>(
-        enabled: isEditing,
+        enabled: isEditing && !isViewingOnly,
         name: 'question_type_${question.id}',
         decoration: const InputDecoration(
           labelText: 'Type',
@@ -148,7 +171,8 @@ class QuestionCard extends StatelessWidget {
             decoration: const InputDecoration(
               border: InputBorder.none,
             ),
-            enabled: !isEditing,
+            enabled: !isEditing && !isViewingOnly,
+            initialValue: question.selectedChoiceId,
             options: question.choices.mapIndexed((index, choice) {
               return FormBuilderFieldOption(
                 key: Key(choice.id),
@@ -217,6 +241,8 @@ class QuestionCard extends StatelessWidget {
 
   Widget _buildEditableChoice(BuildContext context, String questionId, Choice choice, int index) {
     final isUserDefined = choice is ChoiceUserDefined;
+    final isSelected =
+        question is FormQuestionMultiChoice && (question as FormQuestionMultiChoice).selectedChoiceId == choice.id;
 
     return SizedBox(
       width: width * 0.9,
@@ -232,7 +258,12 @@ class QuestionCard extends StatelessWidget {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 isDense: true,
               ),
-              enabled: isEditing ? choice is ChoicePredefined : choice is ChoiceUserDefined,
+              enabled: (isEditing ? choice is ChoicePredefined : choice is ChoiceUserDefined) && !isViewingOnly,
+              validator: isSelected
+                  ? FormBuilderValidators.required(
+                      errorText: 'Please provide content for this option.',
+                    )
+                  : null,
               onChanged: (value) {
                 if (value != null && onUpdateChoiceOptions != null) {
                   onUpdateChoiceOptions!(
@@ -240,7 +271,6 @@ class QuestionCard extends StatelessWidget {
                     choice.id,
                     value,
                   );
-                  FocusScope.of(context).nextFocus();
                 }
               },
             ),
@@ -271,8 +301,8 @@ class QuestionCard extends StatelessWidget {
         border: OutlineInputBorder(),
       ),
       validator: question.isRequired ? FormBuilderValidators.required() : null,
-      maxLines: 3,
-      enabled: !isEditing,
+      maxLines: 5,
+      enabled: !isEditing && !isViewingOnly,
       onChanged: (value) {
         if (value != null && !isEditing && onAnswerParagraphQuestion != null) {
           onAnswerParagraphQuestion!(

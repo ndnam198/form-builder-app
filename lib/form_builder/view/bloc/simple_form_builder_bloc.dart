@@ -33,6 +33,7 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
     );
     on<SimpleFormBuilderEventTogglePreview>(_onTogglePreview);
     on<SimpleFormBuilderEventSubmitForm>(_onSubmitForm);
+    on<SimpleFormBuilderEventClearForm>(_onClearFormAnswer);
   }
 
   void _onUpdateFormTitle(
@@ -424,6 +425,28 @@ class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuild
       state.copyWith(
         responses: updatedResponses,
         error: FormBuilderError.none,
+      ),
+    );
+  }
+
+  void _onClearFormAnswer(
+    SimpleFormBuilderEventClearForm event,
+    Emitter<SimpleFormBuilderState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        questions: state.questions.map((q) {
+          if (q is FormQuestionMultiChoice) {
+            return q.copyWith(
+              selectedChoiceId: '',
+            );
+          } else if (q is FormQuestionParagraph) {
+            return q.copyWith(
+              answer: '',
+            );
+          }
+          return q;
+        }).toList(),
       ),
     );
   }

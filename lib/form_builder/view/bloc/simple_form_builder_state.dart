@@ -17,6 +17,32 @@ abstract class SimpleFormBuilderState with _$SimpleFormBuilderState {
             id: generateUuid(),
             question: 'Untitled Question',
           ),
+          // FormQuestion.multiChoice(
+          //   isRequired: true,
+          //   id: generateUuid(),
+          //   question: 'What programming language have you used the most?',
+          //   choices: [
+          //     Choice.predefined(
+          //       id: generateUuid(),
+          //       description: 'Dart',
+          //     ),
+          //     Choice.predefined(
+          //       id: generateUuid(),
+          //       description: 'Java',
+          //     ),
+          //     Choice.predefined(
+          //       id: generateUuid(),
+          //       description: 'Javascript',
+          //     ),
+          //     Choice.predefined(
+          //       id: generateUuid(),
+          //       description: 'Csharp',
+          //     ),
+          //     Choice.userDefined(
+          //       id: generateUuid(),
+          //     ),
+          //   ],
+          // ),
         ],
       );
 }

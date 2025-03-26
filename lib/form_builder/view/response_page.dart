@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_builder_assignment/form_builder/domain/form_data.dart';
 import 'package:form_builder_assignment/form_builder/view/bloc/simple_form_builder_bloc.dart';
+import 'package:form_builder_assignment/form_builder/view/widgets/response_widget.dart';
 
 class ResponsePage extends StatelessWidget {
   const ResponsePage({super.key});
@@ -21,6 +22,9 @@ class ResponsePage extends StatelessWidget {
               child: ExpansionTile(
                 title: Text(response.formTitle.name),
                 subtitle: Text('Submitted at: ${response.submittedAt!.toLocal()}'),
+                children: [
+                  ResponseWidget(response: response),
+                ],
               ),
             );
           },

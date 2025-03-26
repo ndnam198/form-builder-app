@@ -975,6 +975,27 @@ class SimpleFormBuilderEventSubmitForm implements SimpleFormBuilderEvent {
 }
 
 /// @nodoc
+
+class SimpleFormBuilderEventClearForm implements SimpleFormBuilderEvent {
+  const SimpleFormBuilderEventClearForm();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SimpleFormBuilderEventClearForm);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'SimpleFormBuilderEvent.clearFormAnswer()';
+  }
+}
+
+/// @nodoc
 mixin _$SimpleFormBuilderState {
   FormTitle get formTitle;
   List<FormQuestion> get questions;

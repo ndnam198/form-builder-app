@@ -19,11 +19,14 @@ class FormBuilderProvider extends StatelessWidget {
           length: 2,
           child: Scaffold(
             appBar: AppBar(
-              bottom: const TabBar(
-                tabs: [
-                  Tab(text: 'Form Builder'),
-                  Tab(text: 'Responses'),
-                ],
+              bottom: const PreferredSize(
+                preferredSize: Size.fromHeight(0),
+                child: TabBar(
+                  tabs: [
+                    Tab(text: 'Form Builder'),
+                    Tab(text: 'Responses'),
+                  ],
+                ),
               ),
             ),
             body: const TabBarView(
