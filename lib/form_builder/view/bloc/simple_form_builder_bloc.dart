@@ -1,4 +1,5 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_builder_assignment/form_builder/domain/choice.dart';
 import 'package:form_builder_assignment/form_builder/domain/form_question.dart';
 import 'package:form_builder_assignment/form_builder/domain/form_title.dart';
@@ -10,9 +11,8 @@ part 'simple_form_builder_bloc.freezed.dart';
 part 'simple_form_builder_event.dart';
 part 'simple_form_builder_state.dart';
 
-class SimpleFormBuilderBloc
-    extends Bloc<SimpleFormBuilderEvent, SimpleFormBuilderState> {
-  SimpleFormBuilderBloc() : super(const SimpleFormBuilderState()) {
+class SimpleFormBuilderBloc extends Bloc<SimpleFormBuilderEvent, SimpleFormBuilderState> {
+  SimpleFormBuilderBloc() : super( SimpleFormBuilderState.initial()) {
     on<SimpleFormBuilderEventUpdateFormTitle>(_onUpdateFormTitle);
     on<SimpleFormBuilderEventAddQuestion>(_onAddQuestion);
     on<SimpleFormBuilderEventUpdateQuestion>(_onUpdateQuestion);
@@ -23,9 +23,12 @@ class SimpleFormBuilderBloc
     on<SimpleFormBuilderEventAddUserChoice>(_onAddUserChoice);
     on<SimpleFormBuilderEventAddChoice>(_onAddChoice);
     on<SimpleFormBuilderEventAnswerMultipleChoiceQuestion>(
-        _onAnswerMultipleChoiceQuestion);
+      _onAnswerMultipleChoiceQuestion,
+    );
     on<SimpleFormBuilderEventAnswerParagraphQuestion>(
-        _onAnswerParagraphQuestion);
+      _onAnswerParagraphQuestion,
+    );
+    on<SimpleFormBuilderEventTogglePreview>(_onTogglePreview);
   }
 
   void _onUpdateFormTitle(
@@ -109,8 +112,7 @@ class SimpleFormBuilderBloc
   ) {
     emit(
       state.copyWith(
-        questions:
-            state.questions.where((q) => q.id != event.questionId).toList(),
+        questions: state.questions.where((q) => q.id != event.questionId).toList(),
       ),
     );
   }
@@ -121,10 +123,14 @@ class SimpleFormBuilderBloc
   ) {
     final updatedQuestions = state.questions.map((q) {
       if (q.id == event.questionId) {
-        assert(q.type == QuestionType.multiChoice,
-            '1 only multi choice question can have choices');
-        assert(q is FormQuestionMultiChoice,
-            '2 only multi choice question can have choices');
+        assert(
+          q.type == QuestionType.multiChoice,
+          '1 only multi choice question can have choices',
+        );
+        assert(
+          q is FormQuestionMultiChoice,
+          '2 only multi choice question can have choices',
+        );
 
         return (q as FormQuestionMultiChoice).copyWith(
           choices: q.choices.map((e) {
@@ -157,14 +163,17 @@ class SimpleFormBuilderBloc
   ) {
     final updatedQuestions = state.questions.map((q) {
       if (q.id == event.questionId) {
-        assert(q.type == QuestionType.multiChoice,
-            '1 Only multi choice question can have choices');
-        assert(q is FormQuestionMultiChoice,
-            '2 Only multi choice question can have choices');
+        assert(
+          q.type == QuestionType.multiChoice,
+          '1 Only multi choice question can have choices',
+        );
+        assert(
+          q is FormQuestionMultiChoice,
+          '2 Only multi choice question can have choices',
+        );
 
         return (q as FormQuestionMultiChoice).copyWith(
-          choices:
-              q.choices.where((choice) => choice.id != event.choiceId).toList(),
+          choices: q.choices.where((choice) => choice.id != event.choiceId).toList(),
         );
       }
       return q;
@@ -183,16 +192,19 @@ class SimpleFormBuilderBloc
 
     final updatedQuestions = state.questions.map((q) {
       if (q.id == event.questionId) {
-        assert(q.type == QuestionType.multiChoice,
-            'Only multi choice question can have choices');
-        assert(q is FormQuestionMultiChoice,
-            'Only multi choice question can have choices');
+        assert(
+          q.type == QuestionType.multiChoice,
+          'Only multi choice question can have choices',
+        );
+        assert(
+          q is FormQuestionMultiChoice,
+          'Only multi choice question can have choices',
+        );
 
         final multiChoiceQuestion = q as FormQuestionMultiChoice;
 
         // Check if a user choice already exists
-        final hasUserChoice = multiChoiceQuestion.choices
-            .any((choice) => choice is ChoiceUserDefined);
+        final hasUserChoice = multiChoiceQuestion.choices.any((choice) => choice is ChoiceUserDefined);
 
         // If a user choice already exists, set an error and return the question unchanged
         if (hasUserChoice) {
@@ -264,16 +276,19 @@ class SimpleFormBuilderBloc
 
     final updatedQuestions = state.questions.map((q) {
       if (q.id == event.questionId) {
-        assert(q.type == QuestionType.multiChoice,
-            'Only multi choice question can have choices');
-        assert(q is FormQuestionMultiChoice,
-            'Only multi choice question can have choices');
+        assert(
+          q.type == QuestionType.multiChoice,
+          'Only multi choice question can have choices',
+        );
+        assert(
+          q is FormQuestionMultiChoice,
+          'Only multi choice question can have choices',
+        );
 
         final multiChoiceQuestion = q as FormQuestionMultiChoice;
 
         // Count existing predefined choices
-        final predefinedChoicesCount =
-            multiChoiceQuestion.choices.whereType<ChoicePredefined>().length;
+        final predefinedChoicesCount = multiChoiceQuestion.choices.whereType<ChoicePredefined>().length;
 
         // Check if we've reached the maximum number of predefined choices
         if (predefinedChoicesCount >= maxPredefinedChoicePerQuestion) {
@@ -309,10 +324,14 @@ class SimpleFormBuilderBloc
   ) {
     final updatedQuestions = state.questions.map((q) {
       if (q.id == event.questionId) {
-        assert(q.type == QuestionType.multiChoice,
-            'Only multi choice question can be answered with choices');
-        assert(q is FormQuestionMultiChoice,
-            'Only multi choice question can be answered with choices');
+        assert(
+          q.type == QuestionType.multiChoice,
+          'Only multi choice question can be answered with choices',
+        );
+        assert(
+          q is FormQuestionMultiChoice,
+          'Only multi choice question can be answered with choices',
+        );
 
         return (q as FormQuestionMultiChoice).copyWith(
           selectedChoiceId: event.choiceId,
@@ -332,10 +351,14 @@ class SimpleFormBuilderBloc
   ) {
     final updatedQuestions = state.questions.map((q) {
       if (q.id == event.questionId) {
-        assert(q.type == QuestionType.paragraph,
-            'Only paragraph question can be answered with text');
-        assert(q is FormQuestionParagraph,
-            'Only paragraph question can be answered with text');
+        assert(
+          q.type == QuestionType.paragraph,
+          'Only paragraph question can be answered with text',
+        );
+        assert(
+          q is FormQuestionParagraph,
+          'Only paragraph question can be answered with text',
+        );
 
         return (q as FormQuestionParagraph).copyWith(
           answer: event.answer,
@@ -348,4 +371,17 @@ class SimpleFormBuilderBloc
       state.copyWith(questions: updatedQuestions),
     );
   }
+
+  void _onTogglePreview(
+    SimpleFormBuilderEventTogglePreview event,
+    Emitter<SimpleFormBuilderState> emit,
+  ) {
+    emit(
+      state.copyWith(isPreviewing: !state.isPreviewing),
+    );
+  }
+}
+
+extension SimpleFormBuilderBlocX on BuildContext {
+  SimpleFormBuilderBloc get simpleFormBuilderBloc => read<SimpleFormBuilderBloc>();
 }

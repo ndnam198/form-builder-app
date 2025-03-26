@@ -29,8 +29,7 @@ sealed class SimpleFormBuilderEvent with _$SimpleFormBuilderEvent {
     required QuestionType newType,
   }) = SimpleFormBuilderEventUpdateQuestionType;
 
-  const factory SimpleFormBuilderEvent.removeQuestion(String questionId) =
-      SimpleFormBuilderEventRemoveQuestion;
+  const factory SimpleFormBuilderEvent.removeQuestion(String questionId) = SimpleFormBuilderEventRemoveQuestion;
 
   const factory SimpleFormBuilderEvent.updateChoiceOptions({
     required String questionId,
@@ -55,10 +54,11 @@ sealed class SimpleFormBuilderEvent with _$SimpleFormBuilderEvent {
   }) = SimpleFormBuilderEventAnswerParagraphQuestion;
 
   /// for user to input there own answer
-  const factory SimpleFormBuilderEvent.addUserChoice(
-      {required String questionId,
-      String? description}) = SimpleFormBuilderEventAddUserChoice;
+  const factory SimpleFormBuilderEvent.addUserChoice({
+    required String questionId,
+    String? description,
+  }) = SimpleFormBuilderEventAddUserChoice;
 
-  const factory SimpleFormBuilderEvent.createForm() =
-      SimpleFormBuilderEventCreateForm;
+  const factory SimpleFormBuilderEvent.createForm() = SimpleFormBuilderEventCreateForm;
+  const factory SimpleFormBuilderEvent.togglePreview() = SimpleFormBuilderEventTogglePreview;
 }

@@ -944,6 +944,27 @@ class SimpleFormBuilderEventCreateForm implements SimpleFormBuilderEvent {
 }
 
 /// @nodoc
+
+class SimpleFormBuilderEventTogglePreview implements SimpleFormBuilderEvent {
+  const SimpleFormBuilderEventTogglePreview();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SimpleFormBuilderEventTogglePreview);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'SimpleFormBuilderEvent.togglePreview()';
+  }
+}
+
+/// @nodoc
 mixin _$SimpleFormBuilderState {
   FormTitle get formTitle;
   List<FormQuestion> get questions;

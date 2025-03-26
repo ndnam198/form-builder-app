@@ -19,8 +19,10 @@ abstract class FormData with _$FormData {
     String? name,
     String? description,
   }) {
-    assert(name != null || description != null,
-        'title or description must not be null');
+    assert(
+      name != null || description != null,
+      'title or description must not be null',
+    );
     return copyWith(
       formTitle: formTitle.copyWith(
         name: name ?? formTitle.name,

@@ -9,6 +9,16 @@ abstract class SimpleFormBuilderState with _$SimpleFormBuilderState {
     @Default(FormBuilderError.none) FormBuilderError error,
     @Default(false) bool isLoading,
   }) = _SimpleFormBuilderState;
+
+  factory SimpleFormBuilderState.initial() => SimpleFormBuilderState(
+        questions: [
+          FormQuestion.paragraph(
+            id: generateUuid(),
+            question: 'Untitled Question',
+            answer: 'Long answer text',
+          ),
+        ],
+      );
 }
 
 enum FormBuilderError {

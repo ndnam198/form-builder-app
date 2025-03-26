@@ -9,5 +9,5 @@ abstract class FormTitle with _$FormTitle {
     required String description,
   }) = _FormTitle;
 
-  static const empty = FormTitle(name: 'Untitled', description: '');
+  static const empty = FormTitle(name: 'Untitled', description: 'Form description');
 }
